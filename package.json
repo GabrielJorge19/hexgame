@@ -1,0 +1,28 @@
+{
+  "name": "hexgame",
+  "version": "1.0.0",
+  "description": "a hex game",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GabrielJorge19/hexgame.git"
+  },
+  "keywords": [
+    "hex",
+    "game"
+  ],
+  "author": "gabrielbielcruz1.007@gmail.com",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/GabrielJorge19/hexgame/issues"
+  },
+  "homepage": "https://github.com/GabrielJorge19/hexgame#readme",
+  "dependencies": {
+    "express": "^4.18.2",
+    "nodemon": "^2.0.20"
+  }
+}
