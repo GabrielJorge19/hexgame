@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
-import { Mapa } from './player.js';
+import { Game } from './game.js';
 import {GUI} from 'three/addons/libs/lil-gui.module.min.js';
 
 function main() {
@@ -8,7 +8,7 @@ function main() {
   const renderer = new THREE.WebGLRenderer({canvas});
 
   const camera = new THREE.PerspectiveCamera(45, 2, 0.1, 1000);
-  camera.position.set(0,200,200);
+  camera.position.set(0,100,100);
 
   
   const controls = new OrbitControls(camera, canvas);
@@ -19,12 +19,12 @@ function main() {
   const scene = new THREE.Scene();
   scene.background = new THREE.Color('gray');
 
-  const mapa = new Mapa();
-  scene.add(mapa.object3D);
+  const game = new Game();
+  scene.add(game.object3D);
 
   const light = new THREE.DirectionalLight(0xFFFFFF, 1);
   light.position.set(0, 10, 0);
-  light.target.position.set(-5, 0, 0);
+  light.target.position.set(0, 0, 0);
   scene.add(light);
   scene.add(light.target);
 
@@ -45,7 +45,7 @@ function main() {
       camera.aspect = canvas.clientWidth / canvas.clientHeight;
       camera.updateProjectionMatrix();
     }
-    mapa.newFrame()
+    game.newFrame()
     renderer.render(scene, camera);
 
     requestAnimationFrame(render);
@@ -55,4 +55,3 @@ function main() {
 
 main();
 console.clear();
-//console.log("Fazer a indentificação do mouse no plano, baixei alguns exemplos está na pasta cannon-es")
