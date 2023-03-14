@@ -1,41 +1,60 @@
 import * as THREE from 'three';
 
 class Enemy{
-	constructor(map, player, position){
+	constructor(game, player, position){
 		this.type = 'enemy';
 		this.size = 3;
 		this.attackPower = 10;
-		this.map = map;
+		this.game = game;
 		this.player = player;
 		this.object3D = this.setObject3D(position);
-		this.speed = 0;
+		this.speed = 10;
 		this.body = this.initBody(position);
 		this.body.obj = this;
 		this.life = 100;
+		this.collided = false;
 
-		this.map.add(this);
+		this.game.add(this);
 	}
 	initBody(position){
 		let shape = new CANNON.Box(new CANNON.Vec3(this.size/2, .5,this.size/2));
         //let body = new CANNON.Body({mass: 1, shape, position, material: materials.bullet});
         let body = new CANNON.Body({mass: 1, shape, position});
+        body.linearDamping = .99;
 
         // collide with player
         body.addEventListener('collide', (e) => {
         	let obj = e.body.obj;
         	if(obj){
-        		if(obj.type == "player"){
+        		if((obj.type == "player") && (!this.collided)){
+        			this.collided = true;
         			obj.damage(this.attackPower);
+
+        			let p = e.body.obj.body.position.vadd(e.target.obj.body.position);
+        			p = p.scale(.5, p);
+
+
+        			//console.log("Player: ", e.body.obj.body.position)
+        			//console.log("Enemy:", e.target.obj.body.position)
+        			//console.log("P: ", p)
+
+
+
+        			//console.log(e);
+        			let options = {
+        				position: p,
+        			}
+        			this.game.animations.new("gravity", options);
         		}
         	}
 		});
-
         return body;
 	}
 	newFrame(){
+		this.collided = false;
 		this.move();
 
-		if(this.life <= 0)this.map.removeEnemy(this);
+		if(this.life <= 0)this.game.removeEnemy(this);
 	}
 	hit(value){
 		this.life -= value;

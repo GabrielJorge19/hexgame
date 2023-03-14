@@ -88,9 +88,7 @@ class Mapa{
 		this.object3D = ground3D;
 
 		this.game.object3D.add(ground3D);
-		console.log(this.body);
 	}
-
 }
 
 

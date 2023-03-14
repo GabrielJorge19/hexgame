@@ -1,0 +1,11 @@
+#info{
+	display: flex;
+	justify-content: space-between;
+	position: fixed;
+	width: 100%;
+}
+
+#health{
+	position: fixed;
+	bottom: 0px;
+}
