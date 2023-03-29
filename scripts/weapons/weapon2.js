@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-class Weapon{
+class Weapon2{
 	constructor(player){
 		this.bullets = [];
 		this.player = player;
@@ -50,7 +50,7 @@ class Bullet{
 		this.init(position);
 		this.directed = false;
 		this.remove = remove;
-		this.attackPower = 40;
+		this.attackPower = 140;
 		this.usage = false;
 	}
 	init(position){
@@ -65,7 +65,7 @@ class Bullet{
 
         // Init object3D with three
 		const lineGeometry = new THREE.BoxGeometry(1, 1, 1);
-		const lineMaterial = new THREE.MeshPhongMaterial({color: 0x156200});
+		const lineMaterial = new THREE.MeshPhongMaterial({color: 0x000000});
 		const mesh = new THREE.Mesh( lineGeometry, lineMaterial);
 		mesh.position.copy(position);
 
@@ -77,7 +77,7 @@ class Bullet{
 			if((!this.usage) && (e.body.obj != undefined)){
 				if(e.body.obj.type == "enemy"){
 					this.frameCount = 50;
-					e.body.obj.hit(this.attackPower);
+					e.body.obj.damage(this.attackPower);
 					this.usage = true;
 				}
 			}
@@ -100,4 +100,6 @@ class Bullet{
 	}
 }
 
-export { Weapon };
+
+
+export { Weapon2 };

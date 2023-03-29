@@ -33,14 +33,6 @@ class Enemy{
         			let p = e.body.obj.body.position.vadd(e.target.obj.body.position);
         			p = p.scale(.5, p);
 
-
-        			//console.log("Player: ", e.body.obj.body.position)
-        			//console.log("Enemy:", e.target.obj.body.position)
-        			//console.log("P: ", p)
-
-
-
-        			//console.log(e);
         			let options = {
         				position: p,
         			}
@@ -56,7 +48,7 @@ class Enemy{
 
 		if(this.life <= 0)this.game.removeEnemy(this);
 	}
-	hit(value){
+	damage(value){
 		this.life -= value;
 	}
 	move(){

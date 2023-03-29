@@ -1,5 +1,6 @@
 import * as THREE from 'three';
-import { Weapon } from './Weapon.js';
+import { Weapon } from './weapons/weapon.js';
+import { Weapon2 } from './weapons/weapon2.js';
 
 class Player{
 	constructor(map){
@@ -29,7 +30,8 @@ class Player{
 		this.speed = 2000;
 		this.force = 3000;
 		this.body = this.initPhysicalBody();
-		this.weapon = new Weapon(this);
+		this.weapons = [new Weapon(this), new Weapon2(this)];
+		this.selectedWeapon = 0;
 		this.score = 0;
 		this.forceX = 0;
 		this.keyConfigs = {
@@ -60,7 +62,15 @@ class Player{
 			if((key == "a") || (key == "ArrowLeft")) player.movements.right = value;
 			
 			if(key == "q" && value) player.map.invertPaused();
-			if(key == "e")player.buttonsActions.a = value;
+			if(key == "r" && value){
+				console.log(player.score)
+				if(player.selectedWeapon == player.weapons.length - 1){
+					player.selectedWeapon = 0;
+				} else {
+					player.selectedWeapon++
+				}
+			};
+			if(key == "e") player.buttonsActions.a = value;
 
 
 			if(player.keyConfigs[key] != undefined) player.keyConfigs[key] = value;
@@ -83,7 +93,7 @@ class Player{
 	}
 	damage(value){
 		this.health -= value;
-		//if(this.health <= 0) console.log(this.health, value);
+		if(this.health <= 0) this.map.lost();
 		
 		document.getElementById('health').innerHTML = this.health;
 	}
@@ -142,7 +152,7 @@ class Player{
 
 		return player;
 	}
-	shoot(){this.weapon.shoot(this.body, this.target, this);}
+	shoot(){this.weapons[this.selectedWeapon].shoot(this.body, this.target, this);}
 }
 
 export { Player };
