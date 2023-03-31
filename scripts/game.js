@@ -2,14 +2,13 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { Mapa } from './mapa.js';
 import { Player } from './player.js';
-import { Enemy } from './enemy.js';
+//import { Enemy, Enemy2 } from './enemy.js';
+import { Army } from './army.js';
 import { Animations } from './animations.js';
 import { Menu } from './menu.js';
 
 
 //Para obter um quaternion que faz seu corpo ficar voltado para uma determinada direção, você pode usar Quaternion.setFromVectors(u,v)
-
-
 
 class Game{
 	constructor(){
@@ -39,7 +38,6 @@ class Game{
 
 		this.paused = false;
 
-		this.frame = 0;
 		this.size = 100;
 		this.groundSize = {x: 100, y: .5, z: 100}
 		this.wallSize = {width: 4, height: 50}
@@ -48,20 +46,20 @@ class Game{
 		this.world = new CANNON.World();
 		this.object3D = new THREE.Object3D();
 		this.animations = new Animations(this);
-		this.objects = [this.animations];
 
-		//this.init();
 		this.currentRound = 0;
 
+		this.army = new Army(this)
 
 		this.mapa = new Mapa(this);
 		this.player = new Player(this);
+
+		this.objects = [this.mapa, this.player, this.animations, this.army, this.menu];
 		this.add(this.player);
 
-		this.enemys = [];
-		this.newFrameFunc = () => {if(!this.paused) this.render(this)}
-		//this.nextRound();
 
+		//this.enemys = this.army.alives;
+		this.newFrameFunc = () => {if(!this.paused) this.render(this)}
 		this.scene.add(this.object3D);
 		
 		this.resizeRendererToDisplaySize(this);
@@ -91,12 +89,14 @@ class Game{
 	}
 	restart(){
 		this.currentRound = 0;
-		this.enemys.map((enemy) => {this.remove(enemy);});
-		this.enemys = [];
-		this.nextRound();
+		this.army.alives.map((enemy) => {this.remove(enemy);});
+		this.army.alives = [];
+		//this.nextRound();
+		this.menu.start();
 		if(this.paused) this.start();
+		this.player.body.position.set(-10, .75, 0);
+		this.player.angle = 90;
 
-		document.getElementById('enemys').innerHTML = 0;
 		document.getElementById('end').style.display = "none";
 	}
 	invertPaused(){
@@ -114,56 +114,26 @@ class Game{
 		this.stop();
 	}
 	add(object){
-		this.object3D.add(object.object3D);
-		this.objects.push(object);
-		this.world.addBody(object.body);
+		if(object.body) this.world.addBody(object.body);
+		if(object.object3D) this.object3D.add(object.object3D);
 	}
 	remove(object){
-		this.world.remove(object.body);
-		object.object3D.parent.remove(object.object3D);
-		this.objects.splice(this.objects.indexOf(object), 1);
-	}
-	createEnemy(position){
-		let enemySize = 3;
-		let distanceToPlayer = 0;
-
-		if(!position){
-			do {
-				position = {
-					x: Math.random() * (this.mapa.groundSize.x - enemySize) - this.mapa.groundSize.x/2,
-					y: 1,
-					z: Math.random() * this.mapa.groundSize.x - this.mapa.groundSize.x/2
-				}
-
-				distanceToPlayer = this.player.body.position.distanceTo(position);
-				// Esse trecho vai calcula uma nova posição enquanto a distancia for menor do que o valor especificado
-			} while (distanceToPlayer < 15);
-		}
-
-		this.enemys.push(new Enemy(this, this.player, position));
-	}
-	removeEnemy(enemy){
-		this.remove(enemy);
-		this.enemys.splice(this.enemys.indexOf(enemy), 1);
-		this.player.score += 1;
-		document.getElementById('enemys').innerHTML = this.enemys.length;
-		if(this.enemys.length == 0)	this.nextRound();
+		if(object.body) this.world.remove(object.body);
+		if(object.object3D) object.object3D.parent.remove(object.object3D);
 	}
 	newFrame(){
-		this.frame++;
 		this.world.step(1/60);
 		this.objects.map((obj) => {obj.newFrame();})
 	}
 	nextRound(){
 		this.currentRound++;
-		let enemyCount = 2 + this.currentRound * 3;
+		let enemy = 1 + this.currentRound * 6;
+		let enemy2 = 3 + this.currentRound;
 
-		for(let i = 0;i < enemyCount; i++){
-			this.createEnemy();
-		}
+		for(let i = 0;i < enemy; i++){this.army.createEnemy("Enemy");}
+		for(let i = 0;i < enemy2; i++){this.army.createEnemy("Enemy2");}
 
 		document.getElementById('round').innerHTML = this.currentRound;
-		document.getElementById('enemys').innerHTML = enemyCount;
 		document.getElementById('health').innerHTML = 100;
 		this.player.health = 100;
 	}

@@ -6,14 +6,18 @@ class Menu{
 		this.startButton = new StartButton(this);
 		setTimeout(() => {this.addButton(this.startButton)}, 1000);
 	}
+	newFrame(){}
 	addButton(button){
 	    this.game.object3D.add(button.object3D);
 	    this.game.world.addBody(button.body);
 	}
 	removeButton(button){
 		button.object3D.parent.remove(button.object3D);
-		//button.body.world.remove(button.body);
-		button.body.position.set(0, -5, 0);
+		button.body.world.remove(button.body);
+	}
+	start(){
+		this.startButton.alive = true;
+		this.addButton(this.startButton);
 	}
 	
 }
@@ -50,7 +54,6 @@ class StartButton{
 
 	damage(){
 		if(this.alive){
-			console.log('Start');
 		    this.menu.removeButton(this);
 		    this.menu.game.nextRound();
 		    this.alive = false;

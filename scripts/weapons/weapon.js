@@ -1,14 +1,14 @@
 import * as THREE from 'three';
 
 class Weapon{
-	constructor(player){
+	constructor(arsenal){
 		this.bullets = [];
-		this.player = player;
+		this.arsenal = arsenal;
+		this.player = arsenal.player;
 		this.bulletSpeed = .7;
 		this.timeLastShot = new Date().getTime();
 
 	}
-
 	shoot(){
 		let dateNow = new Date().getTime();
 
@@ -31,12 +31,13 @@ class Weapon{
 
 			let bullet = new Bullet(bulletPosition, bulletVelocity, (bullet) => {this.removeBullet(this, bullet)});
 			this.bullets.push(bullet);
-			this.player.map.add(bullet);	
+			this.player.game.add(bullet);	
 		}
 	}
+	newFrame(){this.bullets.map((bullet) => {bullet.newFrame();})}
 
 	removeBullet(weapon, bullet){
-		weapon.player.map.remove(bullet);
+		weapon.player.game.remove(bullet);
 		this.bullets.splice(this.bullets.indexOf(bullet), 1);
 	}
 }
@@ -90,11 +91,6 @@ class Bullet{
 		//console.log('still alive');
 		this.frameCount++;
 		this.object3D.position.copy(this.body.position);
-
-		if(!this.directed){
-			//this.object3D.lookAt(this.target.x, this.target.y , this.target.z);
-			this.directed = true;
-		}
 
 		if(this.frameCount >= 50){this.remove(this)}
 	}

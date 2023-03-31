@@ -1,12 +1,11 @@
 import * as THREE from 'three';
-import { Weapon } from './weapons/weapon.js';
-import { Weapon2 } from './weapons/weapon2.js';
+import { Arsenal } from './arsenal.js';
 
 class Player{
-	constructor(map){
+	constructor(game){
 		this.type = "player";
-		this.health = 100;
-		this.map = map;
+		this.health = 1000;
+		this.game = game;
 		this.size = 2;
 		this.target = {x:0,y:5,z:0}
 		this.object3D =	this.setObject3D();
@@ -30,8 +29,7 @@ class Player{
 		this.speed = 2000;
 		this.force = 3000;
 		this.body = this.initPhysicalBody();
-		this.weapons = [new Weapon(this), new Weapon2(this)];
-		this.selectedWeapon = 0;
+		this.arsenal = new Arsenal(this);
 		this.score = 0;
 		this.forceX = 0;
 		this.keyConfigs = {
@@ -61,16 +59,12 @@ class Player{
 			if((key == "d") || (key == "ArrowRight")) player.movements.left = value;
 			if((key == "a") || (key == "ArrowLeft")) player.movements.right = value;
 			
-			if(key == "q" && value) player.map.invertPaused();
-			if(key == "r" && value){
-				console.log(player.score)
-				if(player.selectedWeapon == player.weapons.length - 1){
-					player.selectedWeapon = 0;
-				} else {
-					player.selectedWeapon++
-				}
-			};
-			if(key == "e") player.buttonsActions.a = value;
+			if(key == "r" && value) player.game.invertPaused();
+			if(key == "e" && value)	player.arsenal.next();
+			if(key == "q" && value)	player.arsenal.previous();
+			
+			
+			if(key == "5") player.buttonsActions.a = value;
 
 
 			if(player.keyConfigs[key] != undefined) player.keyConfigs[key] = value;
@@ -93,7 +87,7 @@ class Player{
 	}
 	damage(value){
 		this.health -= value;
-		if(this.health <= 0) this.map.lost();
+		if(this.health <= 0) this.game.lost();
 		
 		document.getElementById('health').innerHTML = this.health;
 	}
@@ -119,6 +113,8 @@ class Player{
 
 	}
 	newFrame(){
+		this.arsenal.newFrame();
+
 		// Move
 		this.move();
 
@@ -130,7 +126,7 @@ class Player{
 
 
 		this.onKeyConfigs();
-		if(this.buttonsActions.a) this.shoot()
+		if(this.buttonsActions.a) this.arsenal.shoot()
 	}
 	setObject3D(){
 		const player = new THREE.Object3D();
@@ -152,7 +148,6 @@ class Player{
 
 		return player;
 	}
-	shoot(){this.weapons[this.selectedWeapon].shoot(this.body, this.target, this);}
 }
 
 export { Player };

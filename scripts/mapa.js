@@ -83,6 +83,7 @@ class Mapa{
 
 		this.game.object3D.add(ground3D);
 	}
+	newFrame(){}
 }
 
 
